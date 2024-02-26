@@ -21,6 +21,11 @@
         var moeda;
         var pontuacao = 0;
         var placar;
+        var coracao;
+        var placar2;
+
+        //adicionando lista/array para armazenar os corações coletados
+        var coracoesColetados = [];
 
         // o que essa parte faz? realiza as configurações do jogo, e chama a constante de altura e largura já definidas para as suas posições corretas.
         const config = {
@@ -57,6 +62,8 @@
             this.load.image('plataforma_tijolo','assets/tijolos.png');
             //moedas
             this.load.image('moeda','assets/moeda.png');
+            //coração
+            this.load.image('coracao','assets/coracao.png');
         }
 
         function create() {
@@ -92,6 +99,24 @@
                 pontuacao += 1; //soma pontuação
                 placar.setText('Moedas: '+ pontuacao); //atualiza o placar
                 moeda.setVisible(true); //ativa a visão da "nova moeda"
+            });
+
+            //adicionando coracao
+            coracao = this.physics.add.sprite(larguraJogo/2, 0, 'coracao');
+            coracao.setCollideWorldBounds(true); //ativando as barreiras
+            coracao.setBounce(0.3); //energia mantida após uma colisão, deve ser entre 0 e 1
+            this.physics.add.collider(coracao, plataforma); //colisão entre moeda e platafomra
+            this.physics.add.collider(coracao, plataforma_2);
+            // adicionando placar 
+            placar2 = this.add.text(50, 80, 'Corações Coletados: ' + coracoesColetados.length, {fontSize:'45px', fill:'#495613'});  
+            //quando o alien encostar no coracao...
+            this.physics.add.overlap(alien, coracao, function(){
+                coracoesColetados.push(coracao);//adiciona um item na lista
+                coracao.setVisible(false); //coracao fica "invisivel" e desaparece
+                var posicaoCoracao_Y = Phaser.Math.RND.between (50,650); //sorteia número
+                coracao.setPosition(posicaoCoracao_Y, 100); //ajusta a posicao do coracao
+                placar2.setText('Coração: '+ coracoesColetados.length); //atualiza o placar mostrando quantos itens tem na lista
+                coracao.setVisible(true); //ativa a visão do "novo coração"
             });
         }
 
